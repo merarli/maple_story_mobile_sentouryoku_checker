@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.b90ec36c94b9d1893f401656874fe0dc.js"
+  "precache-manifest.273cabca54bcfdeecc34708ba5e7d7e6.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "maple-story-m-sentouryoku"});
