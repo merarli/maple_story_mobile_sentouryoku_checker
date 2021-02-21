@@ -238,16 +238,11 @@ export default {
 			attackWeight += 2.0 * (this.criticalDamage / 100)
 			attackWeight += 3.0 * (this.lastDamageUp / 100)
 
-			console.log('attackWeight: ' + attackWeight)
 
 			result += this.attack * attackWeight
-			console.log('result: ' + result)
 			result += this.hp / 100
-			console.log('result: ' + result)
 			result += this.physicalDefense * 0.5 * (1 + this.physicalDefenseUp / 100)
-			console.log('result: ' + result)
 			result += this.magicDefense * 0.5 * (1 + this.magicDefenseUp / 100)
-			console.log('result: ' + result)
 
 			result = parseInt(result)
 			result = result.toLocaleString()
@@ -261,7 +256,7 @@ export default {
 			this.presetNum = num
 			const presetKey = 'preset_' + this.presetNum
 			const presetData = JSON.parse(localStorage.getItem(presetKey))
-
+			this.$ga.event('SentouRyokuTool', 'click', 'getPreset', num)
 			this.$bvToast.toast(`プリセット${this.presetNum}の値を読み込みました。`, {
 				title: 'システムログ',
 				autoHideDelay: 500,
@@ -283,6 +278,7 @@ export default {
 		},
 		setPreset() {
 			const presetKey = 'preset_' + this.presetNum
+			this.$ga.event('SentouRyokuTool', 'click', 'setPreset', this.presetNum)
 			const setData = {
 				attack: this.attack,
 				attackUp: this.attackUp,

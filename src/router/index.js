@@ -9,12 +9,15 @@ const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		component: Home
+		component: Home,
+		meta: {title: '| ホーム', desc: ''}
 	},
 	{
 		path: '/SentouRyokuTool',
 		name: 'SentouRyokuTool',
-		component: SentouRyokuTool
+		component: SentouRyokuTool,
+		meta: {title: '| 戦闘力計算機', desc: ''}
+
 	}
 ]
 
