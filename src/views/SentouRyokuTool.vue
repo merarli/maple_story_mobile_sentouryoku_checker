@@ -1,5 +1,6 @@
 <template>
 	<div class="container">
+		<McBuffModal id="buff-modal" :buff-items.sync="buffItems"/>
 		<h3>戦闘力計算機(開発中)</h3>
 		<div class="row">
 			<div class="col-md-12 col-xl-6" style="margin-bottom: 10px">
@@ -12,6 +13,7 @@
 			<div class="col-md-12 col-xl-6" style="text-align: right">
 				<b-button variant="primary" @click="setPreset">上書き保存</b-button>
 			</div>
+
 
 			<div class="col-12">
 				<h4>プリセット{{ presetNum }}</h4>
@@ -184,10 +186,23 @@
 				</b-input-group>
 			</b-form-group>
 
-			<b-form-group class="col-12" style="margin-bottom: 50px">
+			<div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
+				<b-button block @click="openBuffModal" variant="success">バフアイテムを開く</b-button>
+			</div>
+
+			<b-form-group class="col-12" style="margin-bottom: 10px">
 				<b-alert show class="col-12" variant="secondary">
 					<span style="font-size: 30px">戦闘力: </span><span style="font-size: 30px">{{ baseSentouRyoku }}</span>
 				</b-alert>
+			</b-form-group>
+
+
+			<b-form-group class="col-12" style="margin-bottom: 50px">
+				<template v-if="buffSentouRyoku">
+					<b-alert show class="col-12" variant="secondary">
+						<span style="font-size: 30px">バフ込み: </span><span style="font-size: 30px">{{ buffSentouRyoku }}</span>
+					</b-alert>
+				</template>
 			</b-form-group>
 
 
@@ -197,10 +212,11 @@
 </template>
 
 <script>
+import McBuffModal from "../components/McBuffModal";
 
 export default {
 	name: 'Home',
-	components: {},
+	components: {McBuffModal},
 	data() {
 		return {
 			presetNum: 1,
@@ -217,6 +233,41 @@ export default {
 			physicalDefenseUp: null, // 物理防御力上昇
 			magicDefense: null, // 魔法防御力
 			magicDefenseUp: null, // 魔法防御力上昇
+
+			buffItems: [
+				{
+					text: 'ひよこクッキー',
+					stateName: 'bossAttackUp',
+					upSize: 30,
+					check: false
+				},
+				{
+					text: 'イカのバター焼き\n(物理/魔法 攻撃力30% UP)',
+					stateName: 'attackUp',
+					upSize: 30,
+					check: false
+				},
+				{
+					text: 'スティックキャンディー\n(物理/魔法 ダメージ30% UP)',
+					stateName: 'damageUp',
+					upSize: 30,
+					check: false
+				},
+				{
+					text: '小豆かき氷',
+					stateName: 'criticalRate',
+					upSize: 10,
+					check: false
+				},
+				{
+					text: '雑煮',
+					stateName: 'criticalDamage',
+					upSize: 10,
+					check: false
+				},
+
+
+			]
 		}
 	},
 	computed: {
@@ -248,9 +299,62 @@ export default {
 			result = result.toLocaleString()
 
 			return result
+		},
+		buffSentouRyoku() {
+			if (!this.attack || !this.attackUp || !this.damageUp || !this.bossAttackUp || !this.criticalDamage ||
+					!this.criticalRate || !this.lastDamageUp || !this.hp || !this.physicalDefense ||
+					!this.physicalDefenseUp || !this.magicDefense || !this.magicDefenseUp
+			) {
+				return ''
+			}
+
+			let result = 0
+			let attackWeight = 1
+
+			let state = {
+				attackUp: this.attackUp,
+				damageUp: this.damageUp,
+				bossAttackUp: this.bossAttackUp,
+				criticalRate: this.criticalRate,
+				criticalDamage: this.criticalDamage,
+				lastDamageUp: this.lastDamageUp,
+				hp: this.hp,
+				physicalDefense: this.physicalDefense,
+				physicalDefenseUp: this.physicalDefenseUp,
+				magicDefense: this.magicDefense,
+				magicDefenseUp: this.magicDefenseUp
+			}
+
+			// 選択されているバフの効果を加算する
+			this.buffItems.forEach((item) => {
+				if (item.check) {
+					state[item.stateName] = parseFloat(state[item.stateName]) + parseFloat(item.upSize)
+				}
+			})
+
+			attackWeight += 1 * (state.attackUp / 100)
+			attackWeight += 1.5 * (state.damageUp / 100)
+			attackWeight += 1.5 * (state.bossAttackUp / 100)
+			attackWeight += 1.5 * (state.criticalRate / 100)
+			attackWeight += 2.0 * (state.criticalDamage / 100)
+			attackWeight += 3.0 * (state.lastDamageUp / 100)
+
+
+			result += this.attack * attackWeight
+			result += state.hp / 100
+			result += state.physicalDefense * 0.5 * (1 + state.physicalDefenseUp / 100)
+			result += state.magicDefense * 0.5 * (1 + state.magicDefenseUp / 100)
+
+			result = parseInt(result)
+			result = result.toLocaleString()
+
+			return result
 		}
 	},
 	methods: {
+		openBuffModal() {
+			this.$bvModal.show('buff-modal')
+		},
 		// 計算に必要な情報のPresetを読み込む
 		getPreset(num) {
 			this.presetNum = num
