@@ -410,6 +410,16 @@ export default {
 			})
 
 		}
+	},mounted() {
+		const title = "メイプルMツール | 戦闘力計算機"
+		const description = "メイプルストーリーMの新しい戦闘力の計算ができます。バフアイテムを使用したときに変化する戦闘力も計算できます。。"
+		document.title = title
+		document.querySelector("meta[property='og:title']")
+				.setAttribute('content', title)
+		document.querySelector("meta[name='description']")
+				.setAttribute('content', description)
+		document.querySelector("meta[property='og:description']")
+				.setAttribute('content', description)
 	}
 
 }
