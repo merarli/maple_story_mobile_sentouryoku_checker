@@ -1,6 +1,8 @@
 <template>
 	<div class="container">
-		<McBuffModal id="buff-modal" :buff-items.sync="buffItems"/>
+		<McBuffModal id="buff-modal"
+								 :buffItemSelectedList.sync="buffItemSelectedList"
+		/>
 		<h3>戦闘力計算機(開発中)</h3>
 		<div class="row">
 			<div class="col-md-12 col-xl-6" style="margin-bottom: 10px">
@@ -187,7 +189,7 @@
 			</b-form-group>
 
 			<div class="col-12" style="margin-top: 10px; margin-bottom: 10px">
-				<b-button block @click="openBuffModal" variant="success">バフアイテムを開く</b-button>
+				<b-button block @click="openBuffModal" variant="success">バフアイテム/バフスキルを開く</b-button>
 			</div>
 
 			<b-form-group class="col-12" style="margin-bottom: 10px">
@@ -234,40 +236,166 @@ export default {
 			magicDefense: null, // 魔法防御力
 			magicDefenseUp: null, // 魔法防御力上昇
 
-			buffItems: [
-				{
-					text: 'ひよこクッキー',
-					stateName: 'bossAttackUp',
-					upSize: 30,
-					check: false
-				},
-				{
-					text: 'イカのバター焼き\n(物理/魔法 攻撃力30% UP)',
-					stateName: 'attackUp',
-					upSize: 30,
-					check: false
-				},
-				{
-					text: 'スティックキャンディー\n(物理/魔法 ダメージ30% UP)',
-					stateName: 'damageUp',
-					upSize: 30,
-					check: false
-				},
-				{
-					text: '小豆かき氷',
-					stateName: 'criticalRate',
-					upSize: 10,
-					check: false
-				},
-				{
-					text: '雑煮',
-					stateName: 'criticalDamage',
-					upSize: 10,
-					check: false
-				},
+			buffItemSelectedList: {
 
+				// 対ボス攻撃力 A
+				bossAttackUpListASelected: [
+					{
+						stateName: 'bossAttackUp',
+						upSize: 0,
+					}
+				],
 
-			]
+				// 対ボス攻撃力 B
+				bossAttackUpListBSelected: [
+					{
+						stateName: 'bossAttackUp',
+						upSize: 0,
+					}
+				],
+
+				// 対ボス攻撃力 C
+				bossAttackUpListCSelected: [
+					{
+						stateName: 'bossAttackUp',
+						upSize: 0,
+					}
+				],
+
+				// 攻撃力 A
+				attackUpListASelected: [
+					{
+						stateName: 'AttackUp',
+						upSize: 0,
+					}
+				],
+
+				// ダメージ A
+				damageUpListASelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+
+				// ダメージ B
+				damageUpListBSelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+
+				// ダメージ C
+				damageUpListCSelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+
+				// クリティカルダメージ A
+				criticalDamageListASelected: [
+					{
+						stateName: 'criticalDamage',
+						upSize: 0,
+					}
+				],
+
+				//クリティカル率 A
+				criticalRateListASelected: [
+					{
+						stateName: 'criticalRate',
+						upSize: 0,
+					}
+				],
+
+				//クリティカル率 B
+				criticalRateListBSelected: [
+					{
+						stateName: 'criticalRate',
+						upSize: 0,
+					}
+				],
+
+				// フィーバーバフ (クリティカル率 クリティカルダメージ)
+				feverListSelected: [
+					{
+						stateName: 'criticalDamage',
+						upSize: 0,
+					},
+					{
+						stateName: 'criticalRate',
+						upSize: 0,
+					}
+				],
+				advanceBlessListSelected: [
+					{
+						stateName: 'attackUp',
+						upSize: 0,
+					},
+					{
+						stateName: 'bossAttackUp',
+						upSize: 0,
+					}
+				],
+
+				windBoosterListSelected: [
+					{
+						stateName: 'bossAttackUp',
+						upSize: 0,
+					}
+				],
+
+				combatOrderListSelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+
+				modottekiteListSelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+
+				howlingListSelected: [
+					{
+						stateName: 'attackUp',
+						upSize: 0,
+					}
+				],
+
+				braveListSelected: [
+					{
+						stateName: 'attackUp',
+						upSize: 0,
+					}
+				],
+
+				partyMeditationListSelected: [
+					{
+						stateName: 'attackUp',
+						upSize: 0,
+					}
+				],
+
+				meditationListSelected: [
+					{
+						stateName: 'damageUp',
+						upSize: 0,
+					}
+				],
+				twoHandRedLevelSkillListSelected: [
+					{
+						stateName: 'criticalDamage',
+						upSize: 0,
+					}
+				]
+
+			},
 		}
 	},
 	computed: {
@@ -281,11 +409,16 @@ export default {
 
 			let result = 0
 			let attackWeight = 1
+			let criticalRate = this.criticalRate
+			// critical率が100％より大きい場合は100%として処理する
+			if (criticalRate > 100) {
+				criticalRate = 100
+			}
 
 			attackWeight += 1 * (this.attackUp / 100)
 			attackWeight += 1.5 * (this.damageUp / 100)
 			attackWeight += 1.5 * (this.bossAttackUp / 100)
-			attackWeight += 1.5 * (this.criticalRate / 100)
+			attackWeight += 1.5 * (criticalRate / 100)
 			attackWeight += 2.0 * (this.criticalDamage / 100)
 			attackWeight += 3.0 * (this.lastDamageUp / 100)
 
@@ -310,6 +443,7 @@ export default {
 
 			let result = 0
 			let attackWeight = 1
+			const _this = this
 
 			let state = {
 				attackUp: this.attackUp,
@@ -326,16 +460,26 @@ export default {
 			}
 
 			// 選択されているバフの効果を加算する
-			this.buffItems.forEach((item) => {
-				if (item.check) {
+			Object.keys(this.buffItemSelectedList).forEach((key) => {
+				console.log('_this.buffItemSelectedList[key]')
+
+				const states = _this.buffItemSelectedList[key]
+				states.forEach((item) => {
 					state[item.stateName] = parseFloat(state[item.stateName]) + parseFloat(item.upSize)
-				}
+				})
 			})
+
+
+			let criticalRate = state.criticalRate
+			// critical率が100％より大きい場合は100%として処理する
+			if (criticalRate > 100) {
+				criticalRate = 100
+			}
 
 			attackWeight += 1 * (state.attackUp / 100)
 			attackWeight += 1.5 * (state.damageUp / 100)
 			attackWeight += 1.5 * (state.bossAttackUp / 100)
-			attackWeight += 1.5 * (state.criticalRate / 100)
+			attackWeight += 1.5 * (criticalRate / 100)
 			attackWeight += 2.0 * (state.criticalDamage / 100)
 			attackWeight += 3.0 * (state.lastDamageUp / 100)
 
@@ -410,16 +554,13 @@ export default {
 			})
 
 		}
-	},mounted() {
+	}, mounted() {
 		const title = "メイプルMツール | 戦闘力計算機"
 		const description = "メイプルストーリーMの新しい戦闘力の計算ができます。バフアイテムを使用したときに変化する戦闘力も計算できます。。"
 		document.title = title
-		document.querySelector("meta[property='og:title']")
-				.setAttribute('content', title)
-		document.querySelector("meta[name='description']")
-				.setAttribute('content', description)
-		document.querySelector("meta[property='og:description']")
-				.setAttribute('content', description)
+		document.querySelector("meta[property='og:title']").setAttribute('content', title)
+		document.querySelector("meta[name='description']").setAttribute('content', description)
+		document.querySelector("meta[property='og:description']").setAttribute('content', description)
 	}
 
 }
