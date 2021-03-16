@@ -3,7 +3,7 @@
 
 ↓🔥こちらリンクから利用できます🔥↓
 
-[maplem.mera.jp](aplem.mera.jp)
+[maplem.mera.jp](https://maplem.mera.jp)
 
 ## Project setup
 ```
