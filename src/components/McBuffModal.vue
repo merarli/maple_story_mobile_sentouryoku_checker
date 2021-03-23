@@ -127,7 +127,7 @@ export default {
 				{
 					keyName: 'twoHandRedLevelSkillList',
 					selectedName: 'twoHandRedLevelSkillListSelected',
-					showName: '200レベル ハイパーステータス'
+					showName: '200レベル ハイパースキル'
 				},
 
 			],
@@ -239,11 +239,11 @@ export default {
 						],
 					},
 					{
-						text: 'パインキャンディ/松餅(桃) 攻撃力15%UP',
+						text: 'パインキャンディ/松餅(桃) 攻撃力10%UP',
 						value: [
 							{
 								stateName: 'AttackUp',
-								upSize: 15,
+								upSize: 10,
 							}
 						],
 					},
@@ -701,7 +701,7 @@ export default {
 					}
 				],
 
-				twoHandRedLevelSkillList:[
+				twoHandRedLevelSkillList: [
 					{
 						text: 'バフを選択できます',
 						value: [
